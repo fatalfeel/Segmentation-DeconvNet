@@ -92,7 +92,7 @@ class Conv_Deconv(nn.Module):
 
 ############################deconv##########################################
         if self.fullwork is True:
-            self.defc6      = torch.nn.ConvTranspose2d(4096, 512, 7)
+            self.defc6 = torch.nn.ConvTranspose2d(4096, 512, 7)
         else:
             self.defc6 = torch.nn.ConvTranspose2d(512, 512, 7)
 
