@@ -251,7 +251,10 @@ class Conv_Deconv(nn.Module):
         output = self.debn6(output)
         output = self.derelu6(output)
 
-        output = self.maxunpool5(output, indices5, size5_1)
+        if self.fullwork is True:
+            output = self.maxunpool5(output, indices5, size5_3)
+        else:
+            output = self.maxunpool5(output, indices5, size5_1)
         if self.fullwork is True:
             output = self.deconv5_3(output)
             output = self.debn5_3(output)
@@ -263,7 +266,10 @@ class Conv_Deconv(nn.Module):
         output = self.debn5_1(output)
         output = self.derelu5_1(output)
 
-        output = self.maxunpool4(output, indices4, size4_1)
+        if self.fullwork is True:
+            output = self.maxunpool4(output, indices4, size4_3)
+        else:
+            output = self.maxunpool4(output, indices4, size4_1)
         if self.fullwork is True:
             output = self.deconv4_3(output)
             output = self.debn4_3(output)
@@ -275,7 +281,10 @@ class Conv_Deconv(nn.Module):
         output = self.debn4_1(output)
         output = self.derelu4_1(output)
 
-        output = self.maxunpool3(output, indices3, size3_1)
+        if self.fullwork is True:
+            output = self.maxunpool3(output, indices3, size3_3)
+        else:
+            output = self.maxunpool3(output, indices3, size3_1)
         if self.fullwork is True:
             output = self.deconv3_3(output)
             output = self.debn3_3(output)
@@ -287,7 +296,10 @@ class Conv_Deconv(nn.Module):
         output = self.debn3_1(output)
         output = self.derelu3_1(output)
 
-        output = self.maxunpool2(output, indices2, size2_1)
+        if self.fullwork is True:
+            output = self.maxunpool2(output, indices2, size2_2)
+        else:
+            output = self.maxunpool2(output, indices2, size2_1)
         if self.fullwork is True:
             output = self.deconv2_2(output)
             output = self.debn2_2(output)
@@ -296,7 +308,10 @@ class Conv_Deconv(nn.Module):
         output = self.debn2_1(output)
         output = self.derelu2_1(output)
 
-        output = self.maxunpool1(output, indices1, size1_1)
+        if self.fullwork is True:
+            output = self.maxunpool1(output, indices1, size1_2)
+        else:
+            output = self.maxunpool1(output, indices1, size1_1)
         if self.fullwork is True:
             output = self.deconv1_2(output)
             output = self.debn1_2(output)
