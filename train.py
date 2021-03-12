@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import vocset
 from torch.utils.data import Dataset
 from torchvision import transforms
-from model import conv_deconv
+from modeldn import Conv_Deconv
 #torch.set_printoptions(profile="full")
 
 def str2bool(v):
@@ -20,18 +20,19 @@ def str2bool(v):
 parser = argparse.ArgumentParser()
 LookupChoices = type('', (argparse.Action, ), dict(__call__ = lambda a, p, n, v, o: setattr(n, a.dest, a.choices[v])))
 parser.add_argument('--dataset_year', choices = dict(pascal_2011="2011", pascal_2012="2012"), default = "2012", action = LookupChoices)
-parser.add_argument('--model', choices = dict(conv_deconv=conv_deconv()), default = conv_deconv(), action = LookupChoices)
 parser.add_argument('--data', default = './data')
-parser.add_argument('--log', default = '/log/log.txt')
 parser.add_argument('--epochs', default = 20000, type = int)
 parser.add_argument('--batch', default = 64, type = int)
 parser.add_argument('--load', default = False, type = str2bool)
+parser.add_argument('--fullwork', default = False, type = str2bool)
 parser.add_argument('--check_every', default = 10, type = int)
 parser.add_argument('--save_every', default = 10, type = int)
 
 opts    = parser.parse_args()
-device  = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-kwargs  = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
+#device  = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+#kwargs  = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
+device  = torch.device("cpu")
+kwargs  = {}
 
 # normalize filter values to 0-1 so we can visualize them
 def NormalizeImg(img):
@@ -52,12 +53,11 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
 
     if not os.path.isdir(save_path):
         os.mkdir(save_path)
-        os.mkdir(save_path + "/log")
         os.mkdir(save_path + "/checkpoints")
         os.mkdir(save_path + "/saved_images")
 
     for epoch in range(num_epoch):
-        print("\nEPOCH " + str(epoch) + " of " + str(num_epoch) + "\n")
+        print("\nEPOCH " + str(epoch) + " of " + str(num_epoch))
         epoch_loss = 0
         model.train()
         for batch_idx, (inputs, labels) in enumerate(train_loader):
@@ -67,7 +67,7 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
             labels = labels.to(device)
 
             # Feed the network with the datas
-            output, score = model(inputs, False)
+            output, score = model(inputs)
 
             loss = model.lossfunction(score, labels)
             if loss > 0:
@@ -133,10 +133,7 @@ if __name__ == '__main__':
     num_epoch   = opts.epochs
 
     # Create the model before the transformation to get the size
-    if not opts.load:
-        model = opts.model
-    else:
-        model = opts.model ## TO BE CHANGED
+    model = Conv_Deconv(224, opts.fullwork)
     model.to(device)
 
 	## Transformations for datasets
