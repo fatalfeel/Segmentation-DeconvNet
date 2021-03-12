@@ -1,4 +1,4 @@
-# Semantic Segmentation: Deconvelutional Network (DeconvNet) PyTorch
+# Semantic Segmentation DeconvNet PyTorch
 
 #### Data:
 - PASCAL VOC 2012 segmentation dataset (train + val)
