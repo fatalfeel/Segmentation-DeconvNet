@@ -7,10 +7,9 @@ import matplotlib.pyplot as plt
 # http://cvlab.postech.ac.kr/research/deconvnet/
 # http://cvlab.postech.ac.kr/research/deconvnet/model/DeconvNet/DeconvNet_inference_deploy.prototxt
 class Conv_Deconv(nn.Module):
-    def __init__(self, input_size, fullwork):
+    def __init__(self, fullwork):
         super(Conv_Deconv,self).__init__()
         self.name       = 'DeconvNet'
-        self.input_size = input_size
         self.fullwork   = fullwork
 
         # conv1

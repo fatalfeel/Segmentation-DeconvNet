@@ -23,6 +23,7 @@ parser.add_argument('--dataset_year', choices = dict(pascal_2011="2011", pascal_
 parser.add_argument('--data', default = './data')
 parser.add_argument('--epochs', default = 20000, type = int)
 parser.add_argument('--batch', default = 64, type = int)
+parser.add_argument('--input_size', default = 224, type = int)
 parser.add_argument('--fullwork', default = False, type = str2bool)
 parser.add_argument('--cuda', default = False, type = str2bool)
 parser.add_argument('--check_every', default = 10, type = int)
@@ -124,12 +125,8 @@ if __name__ == '__main__':
     save_every  = opts.save_every
     num_epoch   = opts.epochs
 
-    # Create the model before the transformation to get the size
-    model = Conv_Deconv(224, opts.fullwork)
-    model.to(device)
-
 	## Transformations for datasets
-    size            = model.input_size
+    size            = opts.input_size
     transform       = transforms.Compose([transforms.Resize((size, size)),transforms.ToTensor()])
     transform_label = transforms.Compose([transforms.Resize((size, size)),transforms.ToTensor()]) #NO MORE NEEDED CAUSE ITS DONE IN VOC.PY
 
@@ -141,12 +138,16 @@ if __name__ == '__main__':
     train_loader    = torch.utils.data.DataLoader(dataset_train, batch_size=64, shuffle=True, **kwargs)
     val_loader      = torch.utils.data.DataLoader(dataset_val, batch_size=64, shuffle=True, **kwargs)
 
+    # Create the model before the transformation to get the size
+    model = Conv_Deconv(opts.fullwork)
+    model.to(device)
+
     print("Number of training images:", len(dataset_train))
     print("Number of validation images:", len(dataset_val))
     print("Model name:",    model.name)
     print("Loss name:",     model.loss_name)
 
-    # dataset_train.show_color_map() #demo voc color classes
+    #dataset_train.show_color_map() #show voc color classes
 
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
