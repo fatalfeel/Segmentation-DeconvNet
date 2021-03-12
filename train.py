@@ -23,7 +23,6 @@ parser.add_argument('--dataset_year', choices = dict(pascal_2011="2011", pascal_
 parser.add_argument('--data', default = './data')
 parser.add_argument('--epochs', default = 20000, type = int)
 parser.add_argument('--batch', default = 64, type = int)
-parser.add_argument('--load', default = False, type = str2bool)
 parser.add_argument('--fullwork', default = False, type = str2bool)
 parser.add_argument('--cuda', default = False, type = str2bool)
 parser.add_argument('--check_every', default = 10, type = int)
@@ -48,7 +47,7 @@ def show_MNIST(img):
 
 def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader, val_size, optimizer):
     count       = 0
-    save_path   = "results/" + model.name
+    save_path   = "results"
 
     if not os.path.isdir(save_path):
         os.mkdir(save_path)
@@ -60,7 +59,6 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
         epoch_loss = 0
         model.train()
         for batch_idx, (inputs, labels) in enumerate(train_loader):
-            # Load datas and labels
 			#inputs, labels = [torch.autograd.Variable(tensor.to(device)) for tensor in batch]
             inputs = inputs.to(device)
             labels = labels.to(device)
@@ -99,7 +97,6 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
         print('====> Epoch: {} Average loss: {:.4f}'.format(epoch, epoch_loss / train_size))
 
 ################################test#################################
-#####################################################################
         if epoch % check_every == 0:
             model.eval()
             loss_validation = 0
@@ -112,15 +109,11 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
 
                 loss = model.lossfunction(score, labels)
                 loss_validation += loss.item()
-
             print('====> Epoch: {} Validation Loss: {:.4f}'.format(epoch, loss_validation / val_size))
 
+################################save#################################
         if epoch % save_every == 0:
-            torch.save({'epoch': epoch,
-                        'model': opts.model,
-                        'state_dict': model.state_dict()},
-                        save_path + "/checkpoints/model_epoch_"+str(epoch)+".pt")
-
+            torch.save(model.state_dict(), save_path + '/checkpoints/model_epoch_{}.pt'.format(epoch))
             print("checkpoint: saved model")
 
 if __name__ == '__main__':
@@ -142,10 +135,8 @@ if __name__ == '__main__':
 
     dataset_train   = vocset.VOCSegmentation(root=data_path, year=year, image_set="train", transform = transform, target_transform=transform_label)
     dataset_val     = vocset.VOCSegmentation(root=data_path, year=year, image_set="val", transform = transform, target_transform=transform_label)
-
-    dataset_train.show_color_map()
-    train_size   = len(dataset_train)
-    val_size     = len(dataset_val)
+    train_size      = len(dataset_train)
+    val_size        = len(dataset_val)
 
     train_loader    = torch.utils.data.DataLoader(dataset_train, batch_size=64, shuffle=True, **kwargs)
     val_loader      = torch.utils.data.DataLoader(dataset_val, batch_size=64, shuffle=True, **kwargs)
@@ -154,6 +145,8 @@ if __name__ == '__main__':
     print("Number of validation images:", len(dataset_val))
     print("Model name:",    model.name)
     print("Loss name:",     model.loss_name)
+
+    # dataset_train.show_color_map() #demo voc color classes
 
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
