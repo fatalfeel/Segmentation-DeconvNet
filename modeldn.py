@@ -72,15 +72,30 @@ class Conv_Deconv(nn.Module):
             self.relu5_3    = torch.nn.ReLU()
         self.maxpool5   = torch.nn.MaxPool2d(2, stride=2, return_indices=True)
 
-        self.fc6    = torch.nn.Conv2d( 512, 4096, 7)
-        self.bn6    = torch.nn.BatchNorm2d(4096)
+        if self.fullwork is True:
+            self.fc6    = torch.nn.Conv2d( 512, 4096, 7)
+            self.bn6    = torch.nn.BatchNorm2d(4096)
+        else:
+            self.fc6 = torch.nn.Conv2d(512, 512, 7)
+            self.bn6 = torch.nn.BatchNorm2d(512)
+
         self.relu6  = torch.nn.ReLU()
-        self.fc7    = torch.nn.Conv2d(4096, 4096, 1)
-        self.bn7    = torch.nn.BatchNorm2d(4096)
+
+        if self.fullwork is True:
+            self.fc7    = torch.nn.Conv2d(4096, 4096, 1)
+            self.bn7    = torch.nn.BatchNorm2d(4096)
+        else:
+            self.fc7 = torch.nn.Conv2d(512, 512, 1)
+            self.bn7 = torch.nn.BatchNorm2d(512)
+
         self.relu7  = torch.nn.ReLU()
 
 ############################deconv##########################################
-        self.defc6      = torch.nn.ConvTranspose2d(4096, 512, 7)
+        if self.fullwork is True:
+            self.defc6      = torch.nn.ConvTranspose2d(4096, 512, 7)
+        else:
+            self.defc6 = torch.nn.ConvTranspose2d(512, 512, 7)
+
         self.debn6      = torch.nn.BatchNorm2d(512)
         self.derelu6    = torch.nn.ReLU()
 

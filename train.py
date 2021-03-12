@@ -25,14 +25,13 @@ parser.add_argument('--epochs', default = 20000, type = int)
 parser.add_argument('--batch', default = 64, type = int)
 parser.add_argument('--load', default = False, type = str2bool)
 parser.add_argument('--fullwork', default = False, type = str2bool)
+parser.add_argument('--cuda', default = False, type = str2bool)
 parser.add_argument('--check_every', default = 10, type = int)
 parser.add_argument('--save_every', default = 10, type = int)
 
 opts    = parser.parse_args()
-#device  = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-#kwargs  = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
-device  = torch.device("cpu")
-kwargs  = {}
+device  = torch.device("cuda:0" if opts.cuda else "cpu")
+kwargs  = {'num_workers': 1, 'pin_memory': True} if opts.cuda else {}
 
 # normalize filter values to 0-1 so we can visualize them
 def NormalizeImg(img):
