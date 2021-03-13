@@ -198,7 +198,7 @@ class VOCSegmentation(data.Dataset):
         ground_color    = Image.open(self.masks[index]).convert('RGB')
         ground_color    = transforms.Resize((224, 224))(ground_color)
         ground_color    = np.array(ground_color)
-        target_label    = self.encode_segmap(ground_color) #transfer to 21 classe ccolor
+        target_label    = self.encode_segmap(ground_color) #transfer to 21 classes ccolor
         target_label    = torch.from_numpy(target_label)
 
         #self.show_MNIST(image)
