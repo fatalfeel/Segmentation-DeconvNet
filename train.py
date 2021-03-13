@@ -78,19 +78,17 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
 
             # Saving images to have visual results
             if batch_idx % 10 == 0:
-                img_label = transforms.ToPILImage()(dataset_train.decode_segmap(np.array(labels[0].detach().cpu())).astype(np.uint8))
+                img_label   = transforms.ToPILImage()(dataset_train.decode_segmap(np.array(labels[0].detach().cpu())).astype(np.uint8))
                 img_label.save(save_path + "/saved_images/" + str(count) + "_label_" + str(epoch) + "_" + str(batch_idx) + ".png")
 
                 nimg        = NormalizeImg(output[0])
                 img_output  = transforms.ToPILImage()(nimg)
                 img_output.save(save_path + "/saved_images/" + str(count) + "_output_" + str(epoch) + "_" + str(batch_idx) + ".png")
 
-                # img_dec     = torch.argmax(score[0], dim=0, keepdim=True).squeeze().detach().cpu()
-                # img_dec     = dataset_train.decode_segmap(np.array(img_dec)).astype(np.uint8)
-                img_dec     = torch.argmax(score[0], dim=0, keepdim=True).squeeze().detach().cpu()
+                '''img_dec     = torch.argmax(score[0], dim=0, keepdim=True).squeeze().detach().cpu()
                 img_dec     = dataset_train.decode_segmap(np.array(img_dec)).astype(np.uint8)
                 img_score   = transforms.ToPILImage()(img_dec)
-                img_score.save(save_path + "/saved_images/" + str(count) + "_score_" + str(epoch) + "_" + str(batch_idx) + ".png")
+                img_score.save(save_path + "/saved_images/" + str(count) + "_score_" + str(epoch) + "_" + str(batch_idx) + ".png")'''
 
                 count += 1
 
