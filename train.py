@@ -21,8 +21,8 @@ parser = argparse.ArgumentParser()
 LookupChoices = type('', (argparse.Action, ), dict(__call__ = lambda a, p, n, v, o: setattr(n, a.dest, a.choices[v])))
 parser.add_argument('--dataset_year', choices = dict(pascal_2011="2011", pascal_2012="2012"), default = "2012", action = LookupChoices)
 parser.add_argument('--data', default = './data')
-parser.add_argument('--epochs', default = 20000, type = int)
-parser.add_argument('--batch', default = 64, type = int)
+parser.add_argument('--epochs', default = 2000, type = int)
+parser.add_argument('--batch_size', default = 4, type = int)
 parser.add_argument('--input_size', default = 224, type = int)
 parser.add_argument('--fullwork', default = False, type = str2bool)
 parser.add_argument('--cuda', default = False, type = str2bool)
@@ -60,7 +60,7 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
         epoch_loss = 0
         model.train()
         for batch_idx, (inputs, labels) in enumerate(train_loader):
-			#inputs, labels = [torch.autograd.Variable(tensor.to(device)) for tensor in batch]
+            #inputs, labels = [torch.autograd.Variable(tensor.to(device)) for tensor in batch]
             inputs = inputs.to(device)
             labels = labels.to(device)
 
@@ -133,8 +133,8 @@ if __name__ == '__main__':
     train_size      = len(dataset_train)
     val_size        = len(dataset_val)
 
-    train_loader    = torch.utils.data.DataLoader(dataset_train, batch_size=64, shuffle=True, **kwargs)
-    val_loader      = torch.utils.data.DataLoader(dataset_val, batch_size=64, shuffle=True, **kwargs)
+    train_loader    = torch.utils.data.DataLoader(dataset_train,    batch_size=opts.batch_size, shuffle=True, drop_last=True, **kwargs)
+    val_loader      = torch.utils.data.DataLoader(dataset_val,      batch_size=opts.batch_size, shuffle=True, drop_last=True, **kwargs)
 
     # Create the model before the transformation to get the size
     model = Conv_Deconv(opts.fullwork)
