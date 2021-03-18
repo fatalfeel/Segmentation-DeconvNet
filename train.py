@@ -24,7 +24,6 @@ parser.add_argument('--data', default = './data')
 parser.add_argument('--epochs', default = 2000, type = int)
 parser.add_argument('--batch_size', default = 4, type = int)
 parser.add_argument('--input_size', default = 224, type = int)
-parser.add_argument('--fullwork', default = False, type = str2bool)
 parser.add_argument('--cuda', default = False, type = str2bool)
 parser.add_argument('--check_every', default = 10, type = int)
 parser.add_argument('--save_every', default = 10, type = int)
@@ -77,7 +76,7 @@ def train(model, num_epoch, dataset_train, train_loader, train_size, val_loader,
             print('Loss: {:.6f}'.format(loss.item()/len(inputs)))
 
             # Saving images to have visual results
-            if batch_idx % 10 == 0:
+            if batch_idx % 200 == 0:
                 img_label   = transforms.ToPILImage()(dataset_train.decode_segmap(np.array(labels[0].detach().cpu())).astype(np.uint8))
                 img_label.save(save_path + "/saved_images/" + str(count) + "_label_" + str(epoch) + "_" + str(batch_idx) + ".png")
 
@@ -137,16 +136,14 @@ if __name__ == '__main__':
     val_loader      = torch.utils.data.DataLoader(dataset_val,      batch_size=opts.batch_size, shuffle=True, drop_last=True, **kwargs)
 
     # Create the model before the transformation to get the size
-    model = Conv_Deconv(opts.fullwork)
+    model = Conv_Deconv()
     model.to(device)
 
     print("Number of training images:", len(dataset_train))
     print("Number of validation images:", len(dataset_val))
     print("Model name:",    model.name)
-    print("Loss name:",     model.loss_name)
 
     #dataset_train.show_color_map() #show voc color classes
-
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
     train(model, num_epoch, dataset_train, train_loader, train_size, val_loader, val_size, optimizer)
